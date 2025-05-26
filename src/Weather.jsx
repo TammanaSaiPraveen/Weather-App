@@ -87,6 +87,7 @@ const WeatherApp = () => {
   const [temperature, setTemperature] = useState(null);
   const [windSpeed, setWindSpeed] = useState(null);
   const [humidity, setHumidity] = useState(null);
+  const [weatherCondition, setWeatherCondition] = useState("");
 
   const getWeather = async () => {
     if (!city) return;
@@ -96,17 +97,40 @@ const WeatherApp = () => {
     try {
       const response = await fetch(url);
       const data = await response.json();
+
       const kelvinTemp = data.main.temp;
       const celsiusTemp = kelvinTemp - 273.15;
 
       setTemperature(Math.round(celsiusTemp));
-      setWindSpeed(data.wind.speed); // in m/s
-      setHumidity(data.main.humidity); // in %
+      setWindSpeed(data.wind.speed);
+      setHumidity(data.main.humidity);
+      setWeatherCondition(data.weather[0].main);
     } catch (error) {
       alert("City not found");
       setTemperature(null);
       setWindSpeed(null);
       setHumidity(null);
+      setWeatherCondition("");
+    }
+  };
+
+  const getIconForCondition = (condition) => {
+    switch (condition) {
+      case "Clouds":
+        return "/icons/icons8-clouds-48.png";
+      case "Clear":
+        return "/icons/icons8-night-48.png";
+      case "Rain":
+        return "/icons/icons8-cloud-lightning-48.png";
+      case "Thunderstorm":
+        return "/icons/icons8-cloud-lightning-48.png";
+      case "Drizzle":
+        return "/icons/icons8-partly-cloudy-day-48.png";
+      case "Mist":
+      case "Fog":
+        return "/icons/icons8-night-wind-48.png";
+      default:
+        return "/icons/icons8-cloud-48.png";
     }
   };
 
@@ -133,8 +157,8 @@ const WeatherApp = () => {
         {temperature !== null && (
           <div className="space-y-4">
             <img
-              src="https://cdn-icons-png.flaticon.com/512/1163/1163624.png"
-              alt="weather icon"
+              src={getIconForCondition(weatherCondition)}
+              alt={weatherCondition}
               className="mx-auto w-16"
             />
             <p className="text-lg font-medium text-gray-700">
@@ -155,3 +179,4 @@ const WeatherApp = () => {
 };
 
 export default WeatherApp;
+
