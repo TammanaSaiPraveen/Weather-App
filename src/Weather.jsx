@@ -85,8 +85,10 @@ import { FaSearch } from "react-icons/fa";
 const WeatherApp = () => {
   const [city, setCity] = useState("");
   const [temperature, setTemperature] = useState(null);
+  const [windSpeed, setWindSpeed] = useState(null);
+  const [humidity, setHumidity] = useState(null);
 
- const getWeather = async () => {
+  const getWeather = async () => {
     if (!city) return;
 
     const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=d885aa1d783fd13a55050afeef620fcb`;
@@ -96,10 +98,15 @@ const WeatherApp = () => {
       const data = await response.json();
       const kelvinTemp = data.main.temp;
       const celsiusTemp = kelvinTemp - 273.15;
+
       setTemperature(Math.round(celsiusTemp));
+      setWindSpeed(data.wind.speed); // in m/s
+      setHumidity(data.main.humidity); // in %
     } catch (error) {
       alert("City not found");
       setTemperature(null);
+      setWindSpeed(null);
+      setHumidity(null);
     }
   };
 
@@ -133,6 +140,12 @@ const WeatherApp = () => {
             <p className="text-lg font-medium text-gray-700">
               Temperature in <span className="font-bold">{city}</span> is{" "}
               <span className="text-blue-600 font-bold">{temperature}°C</span>
+            </p>
+            <p className="text-gray-700">
+              💨 Wind Speed: <span className="font-bold">{windSpeed} m/s</span>
+            </p>
+            <p className="text-gray-700">
+              💧 Humidity: <span className="font-bold">{humidity}%</span>
             </p>
           </div>
         )}
